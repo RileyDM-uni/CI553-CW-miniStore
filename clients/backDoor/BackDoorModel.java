@@ -8,7 +8,12 @@ import middle.MiddleFactory;
 import middle.StockException;
 import middle.StockReadWriter;
 
+import java.io.File;
 import java.util.Observable;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 /**
  * Implements the Model of the back door client
@@ -139,6 +144,18 @@ public class BackDoorModel extends Observable
     theBasket.clear();                        // Clear s. list
     theAction = "Enter Product Number";       // Set display
     setChanged(); notifyObservers(theAction);  // inform the observer view that model changed
+  }
+  
+  public void playSound() {
+	  try {
+		  File buttonEffect = new File("sounds/buttonNoise.wav"); //sound effects file
+		  AudioInputStream audioStream = AudioSystem.getAudioInputStream(buttonEffect);
+		  Clip clip = AudioSystem.getClip();
+		  clip.open(audioStream);
+		  clip.start();
+	  }catch (Exception ex) {
+		  ex.printStackTrace();
+	  }
   }
   
   /**

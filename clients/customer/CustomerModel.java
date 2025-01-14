@@ -8,7 +8,12 @@ import middle.OrderProcessing;
 import middle.StockException;
 import middle.StockReader;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
+
+import java.io.File;
 import java.util.Observable;
 
 /**
@@ -120,6 +125,18 @@ public class CustomerModel extends Observable
   private void askForUpdate()
   {
     setChanged(); notifyObservers("START only"); // Notify
+  }
+  
+  public void playSound() {
+	  try {
+		  File buttonEffect = new File("sounds/buttonNoise.wav"); //sound effects file
+		  AudioInputStream audioStream = AudioSystem.getAudioInputStream(buttonEffect);
+		  Clip clip = AudioSystem.getClip();
+		  clip.open(audioStream);
+		  clip.start();
+	  }catch (Exception ex) {
+		  ex.printStackTrace();
+	  }
   }
 
   /**

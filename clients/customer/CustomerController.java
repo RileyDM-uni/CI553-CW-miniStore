@@ -36,7 +36,10 @@ public class CustomerController
   {
     model.doClear();
   }
-
+  
+  public void playSound() {
+	  model.playSound();
+  }
   
 }
 

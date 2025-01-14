@@ -5,8 +5,12 @@ import middle.MiddleFactory;
 import middle.OrderProcessing;
 import middle.StockReadWriter;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -20,8 +24,8 @@ public class CashierView implements Observer
   private static final int W = 400;       // Width  of window pixels
   
   private static final String CHECK  = "Check";
-  private static final String BUY    = "Buy";
-  private static final String BOUGHT = "Bought/Pay";
+  private static final String BUY    = "Add";
+  private static final String BOUGHT = "Pay";
 
   private final JLabel      pageTitle  = new JLabel();
   private final JLabel      theAction  = new JLabel();
@@ -31,10 +35,15 @@ public class CashierView implements Observer
   private final JButton     theBtCheck = new JButton( CHECK );
   private final JButton     theBtBuy   = new JButton( BUY );
   private final JButton     theBtBought= new JButton( BOUGHT );
-
+  
+  private final JButton		darkMode   = new JButton();
+  //private final JButton		theBtDiscount = new JButton("Discount");
+  
   private StockReadWriter theStock     = null;
   private OrderProcessing theOrder     = null;
   private CashierController cont       = null;
+  
+  File buttonEffect = new File("sounds/buttonNoise.wav");
   
   /**
    * Construct the view
@@ -60,36 +69,107 @@ public class CashierView implements Observer
     rootWindow.setSize( W, H );                     // Size of Window
     rootWindow.setLocation( x, y );
 
-    Font f = new Font("Monospaced",Font.PLAIN,12);  // Font f is
-
-    pageTitle.setBounds( 110, 0 , 270, 20 );       
-    pageTitle.setText( "Thank You for Shopping at MiniStrore" );                        
-    cp.add( pageTitle );  
+    Font f = new Font("Courier",Font.PLAIN,14);  // Font f is
     
-    theBtCheck.setBounds( 16, 25+60*0, 80, 40 );    // Check Button
+    theBtCheck.setBounds( 135, 15+60*0, 70, 40 );    // Check button
+    theBtCheck.setBackground(Color.GRAY);
+    theBtCheck.setForeground(Color.WHITE);
     theBtCheck.addActionListener(                   // Call back code
-      e -> cont.doCheck( theInput.getText() ) );
-    cp.add( theBtCheck );                           //  Add to canvas
+      e -> {
+    	  cont.playSound();
+    	  cont.doCheck( theInput.getText());
+      	}
+      );
+    cp.add( theBtCheck );                          //  Add to canvas
 
-    theBtBuy.setBounds( 16, 25+60*1, 80, 40 );      // Buy button 
+    theBtBuy.setBounds( 220, 15+60*0, 70, 40 );      // Buy button
+    theBtBuy.setBackground(Color.GRAY);
+    theBtBuy.setForeground(Color.WHITE);
     theBtBuy.addActionListener(                     // Call back code
-      e -> cont.doBuy() );
-    cp.add( theBtBuy );                             //  Add to canvas
-
-    theBtBought.setBounds( 16, 25+60*3, 80, 40 );   // Bought Button
+      e -> {
+    	  cont.playSound();
+    	  cont.doBuy();
+    	  } 
+      );
+    cp.add( theBtBuy );   							//  Add to canvas
+ 
+    theBtBought.setBounds( 305, 15+60*0, 70, 40 );   // Bought Button
+    theBtBought.setBackground(Color.GRAY);
+    theBtBought.setForeground(Color.WHITE);
     theBtBought.addActionListener(                  // Call back code
-      e -> cont.doBought() );
+      e -> {
+    	  cont.playSound();
+    	  cont.doBought(); 
+      	}
+      );
     cp.add( theBtBought );                          //  Add to canvas
 
-    theAction.setBounds( 110, 25 , 270, 20 );       // Message area
+    theAction.setBounds( 16, 55 , 270, 20 );       // Message area
     theAction.setText( "" );                        // Blank
-    cp.add( theAction );                            //  Add to canvas
-
-    theInput.setBounds( 110, 50, 270, 40 );         // Input Area
+    cp.add( theAction );                         //  Add to canvas
+    theAction.setForeground(Color.WHITE);
+    
+    theInput.setBounds( 16, 15+60*0, 110, 40 );     // Input Area
+    theInput.setBackground(Color.GRAY);
+    theInput.setForeground(Color.WHITE);
     theInput.setText("");                           // Blank
     cp.add( theInput );                             //  Add to canvas
+    
+    darkMode.setBounds(295, 175, 83, 40 );
+    darkMode.setBackground(Color.GRAY);
+    darkMode.setForeground(Color.WHITE);
+    darkMode.setText("Light");
+    darkMode.addActionListener(
+    	e ->{
+    		Color bgcolor = cp.getBackground();
+    		if (bgcolor.equals(Color.decode("#35ddff"))) {
+    			cp.setBackground(Color.decode("#000080"));
+    			theInput.setBackground(Color.GRAY);
+    			theInput.setForeground(Color.WHITE);
+    			theOutput.setBackground(Color.GRAY);
+    			theOutput.setForeground(Color.WHITE);
+    			theBtCheck.setBackground(Color.GRAY);
+    			theBtCheck.setForeground(Color.WHITE);
+    			theBtBuy.setBackground(Color.GRAY);
+    			theBtBuy.setForeground(Color.WHITE);
+    			theBtBought.setBackground(Color.GRAY);
+    			theBtBought.setForeground(Color.WHITE);
+    			darkMode.setBackground(Color.GRAY);
+    			darkMode.setForeground(Color.WHITE);
+    			theAction.setForeground(Color.WHITE);
+    			darkMode.setText("Light");
+    		}else {
+    		cp.setBackground(Color.decode("#35ddff"));
+			theInput.setBackground(Color.WHITE);
+			theInput.setForeground(Color.BLACK);
+			theOutput.setBackground(Color.WHITE);
+			theOutput.setForeground(Color.BLACK);
+			theBtCheck.setBackground(Color.WHITE);
+			theBtCheck.setForeground(Color.BLACK);
+			theBtBuy.setBackground(Color.WHITE);
+			theBtBuy.setForeground(Color.BLACK);
+			theBtBought.setBackground(Color.WHITE);
+			theBtBought.setForeground(Color.BLACK);
+			darkMode.setBackground(Color.WHITE);
+			darkMode.setForeground(Color.BLACK);
+			theAction.setForeground(Color.BLACK);
+			darkMode.setText("Dark");
+    		}
+    		cont.playSound();
+    	
+    	}
+    		);
+    cp.add( darkMode );
+    /*
+    theBtDiscount.setBounds(210,15+60*3, 110, 40);
+    theBtDiscount.addActionListener(
+    	e ->cont.applyDiscount());
+    cp.add( theBtDiscount );
+    */
 
-    theSP.setBounds( 110, 100, 270, 160 );          // Scrolling pane
+    theSP.setBounds( 16, 75, 275, 160 );          // Scrolling pane
+    theOutput.setBackground(Color.GRAY);
+    theOutput.setForeground(Color.WHITE);
     theOutput.setText( "" );                        //  Blank
     theOutput.setFont( f );                         //  Uses font  
     cp.add( theSP );                                //  Add to canvas
@@ -107,7 +187,6 @@ public class CashierView implements Observer
   {
     cont = c;
   }
-
   /**
    * Update the view
    * @param modelC   The observed model

@@ -29,5 +29,9 @@ public class PackingController
     model.doPacked();
   }
   
+  public void playSound() {
+	  model.playSound();
+  }
+  
 }
 

@@ -4,8 +4,12 @@ import catalogue.Basket;
 import middle.MiddleFactory;
 import middle.OrderProcessing;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,7 +30,8 @@ public class PackingView implements Observer
   private final JTextArea   theOutput  = new JTextArea();
   private final JScrollPane theSP      = new JScrollPane();
   private final JButton     theBtPack= new JButton( PACKED );
- 
+  
+  private final JButton		darkMode   = new JButton();
   private OrderProcessing theOrder     = null;
   
   private PackingController cont= null;
@@ -55,25 +60,70 @@ public class PackingView implements Observer
     
     Font f = new Font("Monospaced",Font.PLAIN,12);  // Font f is
     
-    pageTitle.setBounds( 110, 0 , 270, 20 );       
+    pageTitle.setBounds( 110, 0 , 270, 20 );
+    pageTitle.setForeground(Color.WHITE);
     pageTitle.setText( "Packing Bought Order" );                        
     cp.add( pageTitle );
 
-    theBtPack.setBounds( 16, 25+60*0, 80, 40 );   // Check Button
+    theBtPack.setBounds( 16, 25+60*3, 80, 40 );   // Check Button
+    theBtPack.setBackground(Color.GRAY);
+    theBtPack.setForeground(Color.WHITE);
     theBtPack.addActionListener(                   // Call back code
-      e -> cont.doPacked() );
+      e -> {
+    	  cont.playSound();
+    	  cont.doPacked();
+      } );
     cp.add( theBtPack );                          //  Add to canvas
 
     theAction.setBounds( 110, 25 , 270, 20 );       // Message area
     theAction.setText( "" );                        // Blank
     cp.add( theAction );                            //  Add to canvas
+    
+    darkMode.setBounds(280, 25+60*3, 83, 40 );
+    darkMode.setBackground(Color.GRAY);
+	darkMode.setForeground(Color.WHITE);
+    darkMode.setText("Light");
+    darkMode.addActionListener(
+    	e ->{
+    		Color bgcolor = cp.getBackground();
+    		if (bgcolor.equals(Color.decode("#35ddff"))) {
+    			cp.setBackground(Color.decode("#000080"));
+    			theOutput.setBackground(Color.GRAY);
+    			theOutput.setForeground(Color.WHITE);
+    			theBtPack.setBackground(Color.GRAY);
+    			theBtPack.setForeground(Color.WHITE);
+    			darkMode.setBackground(Color.GRAY);
+    			darkMode.setForeground(Color.WHITE);
+    			theAction.setForeground(Color.WHITE);
+    			pageTitle.setForeground(Color.WHITE);
+    			darkMode.setText("Light");
+    		}else {
+    		cp.setBackground(Color.decode("#35ddff"));
+			theOutput.setBackground(Color.WHITE);
+			theOutput.setForeground(Color.BLACK);
+			theBtPack.setBackground(Color.WHITE);
+			theBtPack.setForeground(Color.BLACK);
+			darkMode.setBackground(Color.WHITE);
+			darkMode.setForeground(Color.BLACK);
+			theAction.setForeground(Color.BLACK);
+			pageTitle.setForeground(Color.BLACK);
+			darkMode.setText("Dark");
+    		}
+    		cont.playSound();
+    	
+    	}
+    		);
+    cp.add( darkMode );
 
-    theSP.setBounds( 110, 55, 270, 205 );           // Scrolling pane
+    theSP.setBounds( 16, 25, 350, 170 );           // Scrolling pane
+    theOutput.setBackground(Color.GRAY);
+    theOutput.setForeground(Color.WHITE);
     theOutput.setText( "" );                        //  Blank
     theOutput.setFont( f );                         //  Uses font  
     cp.add( theSP );                                //  Add to canvas
     theSP.getViewport().add( theOutput );           //  In TextArea
     rootWindow.setVisible( true );                  // Make visible
+  
   }
   
   public void setController( PackingController c )

@@ -1,11 +1,17 @@
 package clients.cashier;
 
 import catalogue.Basket;
+import catalogue.BetterBasket;
 import catalogue.Product;
 import debug.DEBUG;
 import middle.*;
 
+import java.io.File;
 import java.util.Observable;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 /**
  * Implements the Model of the cashier client
@@ -22,7 +28,9 @@ public class CashierModel extends Observable
 
   private StockReadWriter theStock     = null;
   private OrderProcessing theOrder     = null;
-
+  
+  double total = 0;
+ 
   /**
    * Construct the model of the Cashier
    * @param mf The factory to create the connection objects
@@ -99,6 +107,7 @@ public class CashierModel extends Observable
   {
     String theAction = "";
     int    amount  = 1;                         //  & quantity
+    
     try
     {
       if ( theState != State.checked )          // Not checked
@@ -109,6 +118,8 @@ public class CashierModel extends Observable
           theStock.buyStock(                    //  however
             theProduct.getProductNum(),         //  may fail              
             theProduct.getQuantity() );         //
+        double currentProductPrice = theProduct.getPrice();
+  	  	total = total + currentProductPrice;
         if ( stockBought )                      // Stock bought
         {                                       // T
           makeBasketIfReq();                    //  new Basket ?
@@ -128,7 +139,23 @@ public class CashierModel extends Observable
     theState = State.process;                   // All Done
     setChanged(); notifyObservers(theAction);
   }
-  
+ /* 
+  public void applyDiscount() {
+	  String theAction = "";
+	  if(total > 0) {
+		  Double discountPrice = total - total*0.1;
+		  theAction = "Your new total is £"+String.valueOf(discountPrice);
+		  System.out.println(Math.round(discountPrice));
+		  total = 0;
+		  
+		 
+		  setChanged();
+		  notifyObservers(theAction);
+	  }else {
+		  System.out.println("no items in basket");
+	  }
+  }
+  */
   /**
    * Customer pays for the contents of the basket
    */
@@ -185,14 +212,26 @@ public class CashierModel extends Observable
       }
     }
   }
-
+  
+  public void playSound() {
+	  try {
+		  File buttonEffect = new File("sounds/buttonNoise.wav"); //sound effects file
+		  AudioInputStream audioStream = AudioSystem.getAudioInputStream(buttonEffect);
+		  Clip clip = AudioSystem.getClip();
+		  clip.open(audioStream);
+		  clip.start();
+	  }catch (Exception ex) {
+		  ex.printStackTrace();
+	  }
+  }
   /**
    * return an instance of a new Basket
    * @return an instance of a new Basket
    */
-  protected Basket makeBasket()
+  protected BetterBasket makeBasket()
   {
-    return new Basket();
+    return new BetterBasket();
   }
+  
 }
   

@@ -3,8 +3,12 @@ package clients.backDoor;
 import middle.MiddleFactory;
 import middle.StockReadWriter;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -31,6 +35,8 @@ public class BackDoorView implements Observer
   private final JButton     theBtRStock = new JButton( RESTOCK );
   private final JButton     theBtQuery = new JButton( QUERY );
   
+  private final JButton		darkMode   = new JButton();
+  
   private StockReadWriter theStock     = null;
   private BackDoorController cont= null;
 
@@ -56,48 +62,120 @@ public class BackDoorView implements Observer
     rootWindow.setSize( W, H );                     // Size of Window
     rootWindow.setLocation( x, y );
     
-    Font f = new Font("Monospaced",Font.PLAIN,12);  // Font f is
-
-    pageTitle.setBounds( 110, 0 , 270, 20 );       
-    pageTitle.setText( "Staff check and manage stock" );                        
-    cp.add( pageTitle );
+    Font f = new Font("Courier",Font.PLAIN,12);  // Font f is
     
-    theBtQuery.setBounds( 16, 25+60*0, 80, 40 );    // Buy button 
+    theBtQuery.setBounds( 125, 15+60*0, 80, 40 );    // Buy button 
+    theBtQuery.setBackground(Color.GRAY);
+    theBtQuery.setForeground(Color.WHITE);
     theBtQuery.addActionListener(                   // Call back code
-      e -> cont.doQuery( theInput.getText() ) );
+      e -> {
+    	  cont.playSound();
+    	  cont.doQuery( theInput.getText() );
+    	  } );
     cp.add( theBtQuery );                           //  Add to canvas
-
-    theBtRStock.setBounds( 16, 25+60*1, 80, 40 );   // Check Button
+    
+    theBtRStock.setBounds( 300, 15+60*0, 80, 40 );   // Check Button
+    theBtRStock.setBackground(Color.GRAY);
+    theBtRStock.setForeground(Color.WHITE);
     theBtRStock.addActionListener(                  // Call back code
-      e -> cont.doRStock( theInput.getText(),
-                          theInputNo.getText() ) );
+      e ->{
+    	  cont.playSound();
+    	  cont.doRStock( theInput.getText(),
+                          theInputNo.getText() );
+      	}
+      );
     cp.add( theBtRStock );                          //  Add to canvas
 
-    theBtClear.setBounds( 16, 25+60*2, 80, 40 );    // Buy button 
+    theBtClear.setBounds( 250, 60*1, 90, 40 );
+    theBtClear.setBackground(Color.GRAY);
+    theBtClear.setForeground(Color.WHITE);
     theBtClear.addActionListener(                   // Call back code
-      e -> cont.doClear() );
+      e -> {
+    	  cont.playSound();
+    	  cont.doClear();
+      	}
+      );
     cp.add( theBtClear );                           //  Add to canvas
 
  
-    theAction.setBounds( 110, 25 , 270, 20 );       // Message area
+    theAction.setBounds( 10, 60 , 270, 20 );       // Message area
+    theAction.setForeground(Color.WHITE);
     theAction.setText( "" );                        // Blank
     cp.add( theAction );                            //  Add to canvas
 
-    theInput.setBounds( 110, 50, 120, 40 );         // Input Area
+    theInput.setBounds( 10, 15+60*0, 110, 40 );         // Input Area
+    theInput.setBackground(Color.GRAY);
+    theInput.setForeground(Color.WHITE);
     theInput.setText("");                           // Blank
     cp.add( theInput );                             //  Add to canvas
-    
-    theInputNo.setBounds( 260, 50, 120, 40 );       // Input Area
+
+    theInputNo.setBounds( 215, 15+60*0, 80, 40 );       // Input Area
+    theInputNo.setBackground(Color.GRAY);
+    theInputNo.setForeground(Color.WHITE);
     theInputNo.setText("0");                        // 0
     cp.add( theInputNo );                           //  Add to canvas
+    
+    darkMode.setBounds(295, 175, 83, 40 );
+    darkMode.setBackground(Color.GRAY);
+	darkMode.setForeground(Color.WHITE);
+    darkMode.setText("Light");
+    darkMode.addActionListener(
+    	e ->{
+    		Color bgcolor = cp.getBackground();
+    		if (bgcolor.equals(Color.decode("#35ddff"))) {
+    			cp.setBackground(Color.decode("#000080"));
+    			theInput.setBackground(Color.GRAY);
+    			theInput.setForeground(Color.WHITE);
+    			theInputNo.setBackground(Color.GRAY);
+    			theInputNo.setForeground(Color.WHITE);
+    			theOutput.setBackground(Color.GRAY);
+    			theOutput.setForeground(Color.WHITE);
+    			theBtQuery.setBackground(Color.GRAY);
+    			theBtQuery.setForeground(Color.WHITE);
+    			theBtRStock.setBackground(Color.GRAY);
+    			theBtRStock.setForeground(Color.WHITE);
+    			theBtClear.setBackground(Color.GRAY);
+    			theBtClear.setForeground(Color.WHITE);
+    			darkMode.setBackground(Color.GRAY);
+    			darkMode.setForeground(Color.WHITE);
+    			theAction.setForeground(Color.WHITE);
+    			darkMode.setText("Light");
+    		}else {
+    		cp.setBackground(Color.decode("#35ddff"));
+			theInput.setBackground(Color.WHITE);
+			theInput.setForeground(Color.BLACK);
+			theInputNo.setBackground(Color.WHITE);
+			theInputNo.setForeground(Color.BLACK);
+			theOutput.setBackground(Color.WHITE);
+			theOutput.setForeground(Color.BLACK);
+			theBtQuery.setBackground(Color.WHITE);
+			theBtQuery.setForeground(Color.BLACK);
+			theBtRStock.setBackground(Color.WHITE);
+			theBtRStock.setForeground(Color.BLACK);
+			theBtClear.setBackground(Color.WHITE);
+			theBtClear.setForeground(Color.BLACK);
+			darkMode.setBackground(Color.WHITE);
+			darkMode.setForeground(Color.BLACK);
+			theAction.setForeground(Color.BLACK);
+			darkMode.setText("Dark");
+    		}
+    		cont.playSound();
+    	
+    	}
+    		);
+    cp.add( darkMode );
+    
 
-    theSP.setBounds( 110, 100, 270, 160 );          // Scrolling pane
+    theSP.setBounds( 10, 105, 270, 150 );          // Scrolling pane
+    theOutput.setBackground(Color.GRAY);
+    theOutput.setForeground(Color.WHITE);
     theOutput.setText( "" );                        //  Blank
     theOutput.setFont( f );                         //  Uses font  
     cp.add( theSP );                                //  Add to canvas
     theSP.getViewport().add( theOutput );           //  In TextArea
     rootWindow.setVisible( true );                  // Make visible
     theInput.requestFocus();                        // Focus is here
+ 
   }
   
   public void setController( BackDoorController c )

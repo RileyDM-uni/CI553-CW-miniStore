@@ -38,11 +38,19 @@ public class CashierController
     model.doBuy();
   }
   
+  public void applyDiscount() {
+	  //model.applyDiscount();
+  }
+  
    /**
    * Bought interaction from view
    */
   public void doBought()
   {
     model.doBought();
+  }
+  
+  public void playSound() {
+	  model.playSound();
   }
 }

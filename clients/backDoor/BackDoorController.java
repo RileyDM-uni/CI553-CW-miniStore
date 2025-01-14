@@ -1,6 +1,6 @@
 package clients.backDoor;
 
-
+//
 /**
  * The BackDoor Controller
  */
@@ -45,6 +45,10 @@ public class BackDoorController
   public void doClear()
   {
     model.doClear();
+  }
+  
+  public void playSound() {
+	  model.playSound();
   }
 
   

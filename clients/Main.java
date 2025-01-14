@@ -58,6 +58,8 @@ class Main
     window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
     Dimension pos = PosOnScrn.getPos();
     
+    window.getContentPane().setBackground(Color.decode("#000080"));// Changing the colour the frame background
+    
     CustomerModel model      = new CustomerModel(mlf);
     CustomerView view        = new CustomerView( window, mlf, pos.width, pos.height );
     CustomerController cont  = new CustomerController( model, view );
@@ -77,6 +79,8 @@ class Main
     window.setTitle( "Cashier Client MVC");
     window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
     Dimension pos = PosOnScrn.getPos();
+    
+    window.getContentPane().setBackground(Color.decode("#000080"));// Changing the colour the frame background
     
     CashierModel model      = new CashierModel(mlf);
     CashierView view        = new CashierView( window, mlf, pos.width, pos.height );
@@ -101,6 +105,8 @@ class Main
     window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
     Dimension pos = PosOnScrn.getPos();
     
+    window.getContentPane().setBackground(Color.decode("#000080"));// Changing the colour the frame background
+    
     PackingModel model      = new PackingModel(mlf);
     PackingView view        = new PackingView( window, mlf, pos.width, pos.height );
     PackingController cont  = new PackingController( model, view );
@@ -121,6 +127,9 @@ class Main
     window.setTitle( "BackDoor Client MVC");
     window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
     Dimension pos = PosOnScrn.getPos();
+    
+    window.getContentPane().setBackground(Color.decode("#000080"));// Changing the colour the frame background
+    
     
     BackDoorModel model      = new BackDoorModel(mlf);
     BackDoorView view        = new BackDoorView( window, mlf, pos.width, pos.height );
